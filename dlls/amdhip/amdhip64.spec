@@ -80,7 +80,7 @@
 @ stdcall hipDeviceSetLimit(long int64) wine_hipDeviceSetLimit
 @ stub hipDeviceSetMemPool
 @ stub hipDeviceSetSharedMemConfig
-@ stub hipDeviceSynchronize
+@ stdcall hipDeviceSynchronize() wine_hipDeviceSynchronize
 @ stdcall hipDeviceTotalMem(ptr long) wine_hipDeviceTotalMem
 @ stdcall hipDriverGetVersion(ptr) wine_hipDriverGetVersion
 @ stub hipDrvGetErrorName
@@ -343,7 +343,7 @@
 @ stub hipMemsetD16Async
 @ stub hipMemsetD32
 @ stub hipMemsetD32Async
-@ stub hipMemsetD8
+@ stdcall hipMemsetD8(ptr long int64) wine_hipMemsetD8
 @ stdcall hipMemsetD8Async(ptr long int64 ptr) wine_hipMemsetD8Async
 @ stub hipMemset_spt
 @ stub hipMipmappedArrayCreate
@@ -351,7 +351,7 @@
 @ stub hipMipmappedArrayGetLevel
 @ stdcall hipModuleGetFunction(ptr ptr str) wine_hipModuleGetFunction
 @ stdcall hipModuleGetGlobal(ptr ptr ptr str) wine_hipModuleGetGlobal
-@ stub hipModuleGetTexRef
+@ stdcall hipModuleGetTexRef(ptr ptr str) wine_hipModuleGetTexRef
 @ stub hipModuleLaunchCooperativeKernel
 @ stub hipModuleLaunchCooperativeKernelMultiDevice
 @ stdcall hipModuleLaunchKernel(ptr long long long long long long long ptr ptr ptr) wine_hipModuleLaunchKernel
@@ -397,7 +397,7 @@
 @ stub hipStreamGetFlags_spt
 @ stub hipStreamGetPriority
 @ stub hipStreamGetPriority_spt
-@ stub hipStreamIsCapturing
+@ stdcall hipStreamIsCapturing(ptr ptr) wine_hipStreamIsCapturing
 @ stub hipStreamIsCapturing_spt
 @ stdcall hipStreamQuery(ptr) wine_hipStreamQuery
 @ stub hipStreamQuery_spt
@@ -425,21 +425,21 @@
 @ stub hipTexRefGetMipmapFilterMode
 @ stub hipTexRefGetMipmapLevelBias
 @ stub hipTexRefGetMipmapLevelClamp
-@ stub hipTexRefSetAddress
+@ stdcall hipTexRefSetAddress(ptr ptr ptr int64) wine_hipTexRefSetAddress
 @ stub hipTexRefSetAddress2D
 @ stub hipTexRefSetAddressMode
 @ stub hipTexRefSetArray
 @ stub hipTexRefSetBorderColor
 @ stub hipTexRefSetFilterMode
-@ stub hipTexRefSetFlags
-@ stub hipTexRefSetFormat
+@ stdcall hipTexRefSetFlags(ptr long) wine_hipTexRefSetFlags
+@ stdcall hipTexRefSetFormat(ptr long long) wine_hipTexRefSetFormat
 @ stub hipTexRefSetMaxAnisotropy
 @ stub hipTexRefSetMipmapFilterMode
 @ stub hipTexRefSetMipmapLevelBias
 @ stub hipTexRefSetMipmapLevelClamp
 @ stub hipTexRefSetMipmappedArray
 @ stub hipThreadExchangeStreamCaptureMode
-@ stub hipUnbindTexture
+@ stdcall hipUnbindTexture(ptr) wine_hipUnbindTexture
 @ stub hipUserObjectCreate
 @ stub hipUserObjectRelease
 @ stub hipUserObjectRetain
