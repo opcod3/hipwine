@@ -3,19 +3,14 @@
 Proxy amdhip DLL for wine. Allows one to use HIP within wine.
 Build code is based off of [nvcuda](https://github.com/SveSop/nvcuda)
 
-This code was written before AMD differentiated amdhip dlls based on their version
-(amdhip64_6.dll, amdhip64_7.dll) so it builds a single amdhip64.dll
-
-The current code targets hip 6.x but it should be relatively easy to port to hip 7.x.
-Running a target compiled against hip 6.x with 7.x will result in unexpected behavior
-and likely crashes.
+This code is written targeting HIP 7.x so it builds amdhip64_7.dll
 
 ## Build requirements:  
 - [WINE] (version >= 10.0) [https://www.winehq.org/](https://www.winehq.org/)  
 - [Meson] [http://mesonbuild.com/](http://mesonbuild.com/)  
 - [NINJA] [https://ninja-build.org/](https://ninja-build.org/)  
 - [MINGW-W64] [https://www.mingw-w64.org/](https://www.mingw-w64.org/)
-- [HIP] (version 6.x)
+- [HIP] (version 7.x)
 
 Build by running the included script:  
 `./package-release.sh packagename destdir`  
