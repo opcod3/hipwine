@@ -29,7 +29,6 @@
 #include "hip/hip_deprecated.h"
 
 #include <pthread.h>
-// static pthread_mutex_t stream_callback_mutex   = PTHREAD_MUTEX_INITIALIZER;
 
 // #define HIPERR_ASSERT(x) assert(x)
 #define HIPERR_ASSERT(x)
@@ -64,8 +63,6 @@ void WINAPI wine___hipRegisterFunction(void **modules, const void *hostFunction,
                                        dim3 *gridDim, int *wSize) {
   __hipRegisterFunction(modules, hostFunction, deviceFunction, deviceName,
                         threadLimit, tid, bid, blockDim, gridDim, wSize);
-  // TRACE("(%p, %p, %s, %s, %d)\n", modules, hostFunction, deviceFunction,
-  // deviceName, threadLimit); TRACE("(%p, %s)\n", modules, deviceName);
   TRACE("\n");
 }
 
@@ -98,7 +95,6 @@ hipError_t WINAPI wine_hipDeviceGet(hipDevice_t *device, int ordinal) {
 hipError_t WINAPI wine_hipGetDeviceProperties(void *prop, int deviceId) {
   TRACE("Should not be called!");
   HIPERR_ASSERT(false);
-  //    TRACE("(%p, %d)", prop, deviceId);
   hipError_t err = hipGetDevicePropertiesR0000(prop, deviceId);
   HIPERR_ASSERT(err == 0);
   return err;
@@ -132,7 +128,6 @@ hipError_t WINAPI wine_hipDriverGetVersion(int *driverVersion) {
 hipError_t WINAPI wine_hipDeviceTotalMem(size_t *bytes, hipDevice_t device) {
   hipError_t err = hipDeviceTotalMem(bytes, device);
   TRACE("(%lld, %d)", *bytes, device);
-  // printf("\n hipDeviceTotalMem: %lld", *bytes);
   HIPERR_ASSERT(err == 0);
   TRACE_RET();
   return err;
@@ -299,7 +294,6 @@ hipError_t WINAPI wine_hipCtxPopCurrent(hipCtx_t *ctx) {
 hipError_t WINAPI wine_hipMemGetInfo(size_t *free, size_t *total) {
   hipError_t err = hipMemGetInfo(free, total);
 
-  // Disable free memory fixup
   int64_t free_fix = *free - (1024l * 1024l * 1024l * 2l);
 
   if (free_fix > 0) {
@@ -339,7 +333,6 @@ hipError_t WINAPI wine_hipModuleGetFunction(hipFunction_t *function,
                                             const char *kname) {
   TRACE("()");
   hipError_t err = hipModuleGetFunction(function, module, kname);
-  // HIPERR_ASSERT(err == 0);n
   TRACE_RET();
   return err;
 }
@@ -349,7 +342,6 @@ hipError_t WINAPI wine_hipFuncGetAttribute(int *value,
                                            hipFunction_t hfunc) {
   TRACE("()");
   hipError_t err = hipFuncGetAttribute(value, attrib, hfunc);
-  // HIPERR_ASSERT(err == 0);
   TRACE_RET();
   return err;
 }
@@ -399,20 +391,7 @@ hipError_t WINAPI wine_hipMemcpyHtoD(hipDeviceptr_t dst, void *src,
 hipError_t WINAPI wine_hipModuleGetGlobal(hipDeviceptr_t *dptr, size_t *bytes,
                                           hipModule_t hmod, const char *name) {
   hipError_t err = hipModuleGetGlobal(dptr, bytes, hmod, name);
-  // TRACE("(%p, %lld, %p, %s)", *dptr, *bytes, hmod, name);
   HIPERR_ASSERT(err == 0);
-
-  // if (err != 0) {
-  //     if (dptr != NULL) {
-  //         *dptr = (void*)0xDEADBEEF;
-  //     }
-
-  //     if (bytes != NULL) {
-  //         *bytes = 0;
-  //     }
-  // }
-
-  // TRACE_RET();
   return err;
 }
 
@@ -525,37 +504,7 @@ hipError_t WINAPI wine_hipStreamWaitEvent(hipStream_t stream, hipEvent_t event,
   return err;
 }
 
-hipMemoryType fixMem(hipMemoryType memType) {
-  switch (memType) {
-  case 0:
-    return 1;
-  case 1:
-    return 2;
-  case 2:
-    return 10;
-    break;
-  case 3:
-    return 11;
-  case 4:
-    return 3;
-  }
-}
-
-void fixMem_i(hipMemoryType *m) { *m = fixMem(*m); }
-
-// Very weird shit is happening, wtf
 hipError_t WINAPI wine_hipMemcpyParam2D(const hip_Memcpy2D *pCopy) {
-
-  // hip_Memcpy2D local = *pCopy;
-  // fixMem(&(local.srcMemoryType));
-  // fixMem(&(local.dstMemoryType));
-
-  // hip_Memcpy2D local = *pCopy;
-  // fixMem_i(&(local.srcMemoryType));
-  // fixMem_i(&(local.dstMemoryType));
-  // hipError_t err = hipMemcpyParam2D(&local);
-
-  // No need for hip 5.0 fixup
   hipError_t err = hipMemcpyParam2D(pCopy);
   HIPERR_ASSERT(err == 0);
   return err;
@@ -630,65 +579,6 @@ hipError_t WINAPI wine_hipTexRefSetFlags(textureReference *texRef,
                                           unsigned int Flags) {
   return hipTexRefSetFlags(texRef, Flags);
 }
-
-typedef struct HIP_MEMCPY3D_v5 {
-  unsigned int srcXInBytes;
-  unsigned int srcY;
-  unsigned int srcZ;
-  unsigned int srcLOD;
-  hipMemoryType srcMemoryType;
-  const void *srcHost;
-  hipDeviceptr_t srcDevice;
-  hipArray_t srcArray;
-  unsigned int srcPitch;
-  unsigned int srcHeight;
-  unsigned int dstXInBytes;
-  unsigned int dstY;
-  unsigned int dstZ;
-  unsigned int dstLOD;
-  hipMemoryType dstMemoryType;
-  void *dstHost;
-  hipDeviceptr_t dstDevice;
-  hipArray_t dstArray;
-  unsigned int dstPitch;
-  unsigned int dstHeight;
-  unsigned int WidthInBytes;
-  unsigned int Height;
-  unsigned int Depth;
-} HIP_MEMCPY3D_v5;
-
-// hipError_t WINAPI wine_hipDrvMemcpy3D(const HIP_MEMCPY3D_v5 *pCopy)
-// {
-//     HIP_MEMCPY3D local = {
-//         .srcXInBytes = pCopy->srcXInBytes,
-//         .srcY = pCopy->srcY,
-//         .srcZ = pCopy->srcZ,
-//         .srcLOD = pCopy->srcLOD,
-//         .srcMemoryType = fixMem(pCopy->srcMemoryType),
-//         .srcHost = pCopy->srcHost,
-//         .srcDevice = pCopy->srcDevice,
-//         .srcArray = pCopy->srcArray,
-//         .srcPitch = pCopy->srcPitch,
-//         .srcHeight = pCopy->srcHeight,
-//         .dstXInBytes = pCopy->dstXInBytes,
-//         .dstY = pCopy->dstY,
-//         .dstZ = pCopy->dstZ,
-//         .dstLOD = pCopy->dstLOD,
-//         .dstMemoryType = fixMem(pCopy->dstMemoryType),
-//         .dstHost = pCopy->dstHost,
-//         .dstDevice = pCopy->dstDevice,
-//         .dstArray = pCopy->dstArray,
-//         .dstPitch = pCopy->dstPitch,
-//         .dstHeight = pCopy->dstHeight,
-//         .WidthInBytes = pCopy->WidthInBytes,
-//         .Height = pCopy->Height,
-//         .Depth = pCopy->Depth,
-//     };
-
-//     hipError_t err = hipDrvMemcpy3D(&local);
-//     HIPERR_ASSERT(err == 0);
-//     return err;
-// }
 
 hipError_t WINAPI wine_hipDrvMemcpy3D(const HIP_MEMCPY3D *pCopy) {
   hipError_t err = hipDrvMemcpy3D(pCopy);
